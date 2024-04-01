@@ -143,9 +143,12 @@ async function run() {
       res.send(result)
 
     })
-    app.get('/myMissions/:email', async (req, res) => {
+    app.get('/myMissions/:email',verifyToken, async (req, res) => {
       const email = req.params.email;
-      const query = { email: email }; // This line can be simplified
+      if(email!==req.decoded.email){
+        return res.status(403).send({ message: 'forbidden access' })
+      }
+      const query = { email: email }; 
       try {
           const result = await participatedMissionsCollection.find(query).toArray();
           res.send(result);
